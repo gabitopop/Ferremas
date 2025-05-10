@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Productos - Ferremas</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<style>
+    .product-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 2em;
+  margin-top: 2em;
+}
+
+.product-card {
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  padding: 1em;
+  text-align: center;
+  background-color: #fff;
+  box-shadow: 0 0 8px rgba(0,0,0,0.05);
+}
+
+.product-card img {
+  width: 100%;
+  height: 160px;
+  object-fit: contain;
+  margin-bottom: 1em;
+}
+
+.product-card h3 {
+  font-size: 1.1em;
+  margin-bottom: 0.5em;
+}
+
+.product-card .price {
+  color: #28a745;
+  font-weight: bold;
+  margin-bottom: 1em;
+}
+
+.product-card .btn {
+  background-color: #007bff;
+  color: white;
+  padding: 0.5em 1em;
+  border-radius: 6px;
+  text-decoration: none;
+  display: inline-block;
+}
+
+.product-card .btn:hover {
+  background-color: #0056b3;
+}
+
+</style>
+<body>
+  <div class="container">
+    <h1>🛍️ Productos Destacados</h1>
+
+    <div class="product-grid">
+      <div class="product-card">
+        <img src="img/martillo.jpg" alt="Martillo Antideslizante" />
+        <h3>Martillo Antideslizante</h3>
+        <p class="price">$15.990</p>
+        <a href="detalle-producto.html?id=1" class="btn">Ver Detalle</a>
+      </div>
+
+      <div class="product-card">
+        <img src="img/taladro.jpg" alt="Taladro Percutor" />
+        <h3>Taladro Percutor</h3>
+        <p class="price">$49.990</p>
+        <a href="detalle-producto.html?id=2" class="btn">Ver Detalle</a>
+      </div>
+
+      <div class="product-card">
+        <img src="img/llave.jpg" alt="Llave Inglesa" />
+        <h3>Llave Inglesa</h3>
+        <p class="price">$8.500</p>
+        <a href="detalle-producto.html?id=3" class="btn">Ver Detalle</a>
+      </div>
+
+      <!-- Puedes seguir agregando más productos aquí -->
+    </div>
+  </div>
+</body>
+</html>

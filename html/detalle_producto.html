@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Detalle de Producto - Ferremas</title>
+  <style>
+    body { font-family: sans-serif; margin: 0; padding: 0; background: #f9f9f9; }
+    .container { max-width: 1200px; margin: auto; padding: 2em; }
+    .product-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2em; }
+    .image-container img { width: 100%; border-radius: 8px; }
+    h1 { font-size: 2em; margin-bottom: 0.5em; }
+    .price { font-size: 1.8em; font-weight: bold; color: #28a745; margin: 1em 0; }
+    .features ul { padding-left: 1.2em; }
+    .features li::marker { color: #28a745; }
+    button { background: #28a745; color: white; padding: 0.6em 1.2em; border: none; border-radius: 5px; cursor: pointer; }
+    button:hover { background: #218838; }
+    .card { background: white; border-radius: 8px; padding: 1.5em; margin-top: 2em; box-shadow: 0 0 8px rgba(0,0,0,0.05); }
+    dt { font-weight: bold; }
+    dd { margin: 0 0 1em 0; }
+    .review { border-top: 1px solid #ddd; padding-top: 1em; margin-top: 1em; }
+    .review-stars { color: gold; }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+
+    <div class="product-grid">
+      <!-- Imagen del producto -->
+      <div class="image-container">
+        <img src="https://via.placeholder.com/500x500?text=Producto" alt="Nombre del producto" />
+      </div>
+
+      <!-- Información del producto -->
+      <div>
+        <h1>Nombre del Producto</h1>
+        <div class="rating">★★★★★ (4 reviews)</div>
+        <div class="price">$15.990</div>
+        <p>Este es un producto de ejemplo con una descripción larga que detalla sus características, aplicaciones y beneficios.</p>
+
+        <div class="features">
+          <h3>Características:</h3>
+          <ul>
+            <li>Alta durabilidad</li>
+            <li>Material resistente</li>
+            <li>Diseño ergonómico</li>
+          </ul>
+        </div>
+
+        <button>Agregar al carrito</button>
+        <p style="margin-top: 0.5em; color: #777;">12 unidades disponibles</p>
+      </div>
+    </div>
+
+    <!-- Especificaciones -->
+    <div class="card">
+      <h2>Especificaciones</h2>
+      <dl>
+        <dt>Peso:</dt>
+        <dd>1.2 kg</dd>
+        <dt>Material:</dt>
+        <dd>Acero inoxidable</dd>
+        <dt>Dimensiones:</dt>
+        <dd>25 x 10 x 5 cm</dd>
+      </dl>
+    </div>
+
+    <!-- Reseñas -->
+    <div class="card">
+      <h2>Reseñas de clientes</h2>
+      <div class="review">
+        <div class="review-stars">★★★★☆</div>
+        <strong>Juan Pérez</strong> – <small>10/04/2025</small>
+        <p>Muy buen producto, lo recomiendo completamente.</p>
+      </div>
+      <div class="review">
+        <div class="review-stars">★★★★★</div>
+        <strong>María López</strong> – <small>05/04/2025</small>
+        <p>Excelente calidad, lo volvería a comprar.</p>
+      </div>
+      <button style="margin-top: 1em;">Escribir una reseña</button>
+    </div>
+
+  </div>
+
+</body>
+</html>
