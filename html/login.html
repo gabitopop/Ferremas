@@ -1,0 +1,26 @@
+<!-- login.html -->
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Login - Ferremas</title>
+  <style>
+    body { font-family: sans-serif; background: #f4f4f4; padding: 40px; }
+    form { max-width: 300px; margin: auto; background: white; padding: 20px; border-radius: 8px; }
+    input { width: 100%; margin-bottom: 10px; padding: 8px; }
+    button { width: 100%; padding: 10px; background: #007bff; color: white; border: none; }
+  </style>
+</head>
+<body>
+  <h2>Iniciar sesión</h2>
+  <form id="loginForm">
+    <input type="email" id="email" placeholder="Correo electrónico" required>
+    <input type="password" id="password" placeholder="Contraseña" required>
+    <button type="submit">Entrar</button>
+    <p id="msg" style="color: red;"></p>
+  </form>
+
+<script src="login.js"></script>
+
+</body>
+</html>
