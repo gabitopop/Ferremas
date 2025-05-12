@@ -1,0 +1,418 @@
+:root {
+  --white: hsl(0, 0%, 100%);
+  --black: hsl(0, 0%, 0%);
+  --surface: hsl(0, 0%, 12%);
+  --muted-base: hsl(0, 0%, 15%);
+  --muted-text: hsl(0, 0%, 65%);
+
+  --background: var(--black);
+  --foreground: var(--white);
+  --card: var(--surface);
+  --card-foreground: var(--white);
+  --popover: var(--surface);
+  --popover-foreground: var(--white);
+  --primary: hsl(355, 78%, 52%);
+  --primary-foreground: var(--white);
+  --secondary: hsl(197, 78%, 52%);
+  --secondary-foreground: var(--white);
+  --muted: var(--muted-base);
+  --muted-foreground: var(--muted-text);
+  --accent:  hsl(355, 78%, 52%);
+  --accent-foreground: var(--black);
+  --destructive: hsl(0, 70%, 50%);
+  --destructive-foreground: var(--white);
+  --border: hsl(0, 0%, 20%);
+  --input: var(--muted-base);
+  --ring: hsl(197, 78%, 52%);
+  --radius: 0.5rem;
+}
+
+@import url('https://fonts.googleapis.com/css2?family=Bangers&display=swap');
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  background-color: var(--background);
+  color: var(--foreground);
+  font-family: Arial, sans-serif;
+  line-height: 1.5;
+}
+body::before {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: url('https://www.transparenttextures.com/patterns/spider-web.png');
+  opacity: 0.05;
+  pointer-events: none;
+  z-index: 0;
+}
+
+h1, h2, .section-title {
+  font-family: 'Bangers', cursive;
+  text-shadow: 2px 2px 0 #000;
+  letter-spacing: 1px;
+}
+
+header,
+footer,
+footer.bg-dark {
+  background-color: var(--card);
+  color: var(--muted-foreground);
+  padding: 1.5em;
+  text-align: center;
+  font-size: 0.875rem;
+}
+
+header h1,
+.section-title {
+  color: var(--primary);
+  font-size: 2.5rem;
+  margin-bottom: 0.5em;
+  text-align: center;
+}
+
+h2 {
+  text-align: center;
+  font-size: 2rem;
+  margin: 1.5rem 0;
+  color: var(--accent);
+}
+
+nav ul {
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
+  list-style: none;
+  padding: 1rem 0;
+}
+
+nav a,
+.navbar .nav-link,
+.nav-link {
+  color: var(--foreground) !important;
+  text-decoration: none;
+  font-size: 1.1rem;
+}
+
+nav a:hover,
+.navbar .nav-link:hover,
+.nav-button:hover,
+.search-button:hover,
+.cart-button:hover,
+.user-button:hover {
+  color: var(--secondary);
+  text-decoration: underline;
+}
+
+.carousel {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  overflow-x: auto;
+  padding: 1rem;
+  background-color: var(--muted);
+  scroll-snap-type: x mandatory;
+}
+
+.carousel-item {
+  flex: 0 0 auto;
+  width: 500px;
+  border-radius: var(--radius);
+  overflow: hidden;
+  flex-shrink: 0;
+  scroll-snap-align: center;
+  background-color: var(--card);
+}
+
+.carousel-item img,
+.product-card img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: var(--radius);
+}
+
+#featured-products {
+  padding: 2rem 0;
+}
+
+.products {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 1.5rem;
+  padding: 0 1rem;
+}
+
+.product-card,
+.card {
+  background-color: var(--card);
+  border-radius: var(--radius);
+  padding: 1rem;
+  text-align: center;
+  color: var(--card-foreground);
+  border: 2px dashed var(--accent);
+  background-image: radial-gradient(circle at top left, rgba(255,255,255,0.03), transparent 70%);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.product-card:hover,
+.card:hover {
+  transform: scale(1.05) rotate(-0.5deg);
+  box-shadow: 0 0 15px var(--accent);
+}
+
+.product-card h3 {
+  font-size: 1.25rem;
+  margin: 1rem 0;
+}
+
+.product-card p {
+  font-size: 1rem;
+  margin-bottom: 1rem;
+  color: var(--accent);
+}
+
+.product-card button,
+.btn,
+.btn-checkout,
+.btn-back {
+  background-color: var(--primary);
+  color: var(--primary-foreground);
+  padding: 0.6rem 1.2rem;
+  border: none;
+  border-radius: var(--radius);
+  cursor: pointer;
+  font-weight: 500;
+  transition: background-color 0.3s ease;
+}
+
+.product-card button:hover,
+.btn-primary:hover,
+.btn-checkout:hover {
+  background-color: var(--secondary) !important;
+  border-color: var(--secondary) !important;
+  color: var(--secondary-foreground) !important;
+}
+
+.btn-outline-primary {
+  color: var(--primary) !important;
+  border-color: var(--primary) !important;
+}
+
+.btn-outline-primary:hover {
+  background-color: var(--primary) !important;
+  color: var(--primary-foreground) !important;
+}
+
+.btn-outline-success {
+  color: var(--secondary) !important;
+  border-color: var(--secondary) !important;
+}
+
+.btn-outline-success:hover {
+  background-color: var(--secondary) !important;
+  color: var(--secondary-foreground) !important;
+}
+
+.btn-outline-secondary {
+  color: var(--muted-foreground) !important;
+  border-color: var(--border) !important;
+}
+
+.btn-outline-secondary:hover {
+  background-color: var(--muted) !important;
+  color: var(--foreground) !important;
+}
+
+footer p {
+  font-size: 0.9rem;
+}
+
+.cart-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 2rem;
+  color: var(--foreground);
+}
+
+.cart-table th,
+.cart-table td {
+  border-bottom: 1px solid var(--border);
+  padding: 1em;
+  text-align: left;
+}
+
+.cart-table input[type="number"] {
+  width: 60px;
+  padding: 0.4em;
+  font-size: 1em;
+  background-color: var(--input);
+  color: var(--foreground);
+  border: 1px solid var(--border);
+}
+
+.btn-delete {
+  background-color: var(--destructive);
+  color: var(--destructive-foreground);
+  border: none;
+  padding: 0.4em 0.8em;
+  border-radius: var(--radius);
+  cursor: pointer;
+}
+
+.btn-delete:hover {
+  background-color: hsl(0, 70%, 40%);
+}
+
+.cart-summary {
+  margin-top: 2em;
+  text-align: right;
+}
+
+.total {
+  font-size: 1.5rem;
+  color: var(--accent);
+}
+
+.header {
+  background-color: var(--card);
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  border-bottom: 1px solid var(--border);
+}
+
+.container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  max-width: 100%;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+  color: var(--foreground);
+}
+
+.logo-icon {
+  width: 30px;
+  height: 30px;
+  margin-right: 8px;
+}
+
+.logo-text {
+  font-size: 1.5rem;
+  font-weight: bold;
+}
+
+.nav,
+.actions {
+  display: flex;
+  gap: 2rem;
+  align-items: center;
+}
+
+.nav-button,
+.search-button,
+.cart-button,
+.user-button {
+  background: none;
+  border: none;
+  color: var(--foreground);
+  font-size: 1rem;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+}
+
+.search-container {
+  display: flex;
+  align-items: center;
+  background-color: var(--input);
+  border-radius: 4px;
+  padding: 0.5rem;
+}
+
+.search-input {
+  background-color: var(--input);
+  border: none;
+  color: var(--foreground);
+  padding: 0.5rem;
+  border-radius: 4px;
+  width: 180px;
+}
+
+.cart-badge {
+  position: absolute;
+  top: 0;
+  right: 0;
+  background-color: var(--secondary);
+  color: var(--black);
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  font-size: 0.75rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+@media (max-width: 768px) {
+  .container {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .nav {
+    margin-top: 1rem;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .search-input {
+    width: 150px;
+  }
+}
+
+.bg-light,
+.bg-white,
+.bg-body,
+.navbar,
+.navbar-light,
+.navbar-expand-lg {
+  background-color: var(--card) !important;
+}
+
+.badge,
+.badge.bg-danger,
+.badge.bg-secondary {
+  background-color: var(--accent) !important;
+  color: var(--accent-foreground) !important;
+}
+
+.carousel-control-prev-icon,
+.carousel-control-next-icon {
+  filter: invert(1);
+}
+
+.table {
+  color: var(--foreground);
+  background-color: var(--card);
+}
+
+.table th,
+.table td {
+  border-color: var(--border) !important;
+}
