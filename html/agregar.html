@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>Agregar Producto - Ferremas</title>
+  <style>
+    body { font-family: sans-serif; background: #f9f9f9; padding: 40px; }
+    form { max-width: 400px; margin: auto; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
+    input, textarea { width: 100%; margin-bottom: 12px; padding: 8px; font-size: 16px; }
+    button { width: 100%; padding: 12px; background: #28a745; color: white; border: none; font-size: 16px; cursor: pointer; }
+    button:hover { background: #218838; }
+    #msg { margin-top: 10px; font-weight: bold; }
+  </style>
+</head>
+<body>
+  <h2>Agregar Nuevo Producto</h2>
+  <form id="productoForm">
+    <input type="text" id="nombre" placeholder="Nombre del producto" required />
+    <input type="number" id="precio" placeholder="Precio" step="0.01" required />
+    <textarea id="descripcion" placeholder="Descripción" rows="4" required></textarea>
+    <button type="submit">Agregar Producto</button>
+    <p id="msg"></p>
+  </form>
+  <footer class="bg-dark text-white text-center py-4">
+    <p class="mb-0">&copy; 2025 Ferremas. Todos los derechos reservados.</p>
+  </footer>
+  <script src="../js/agregar_producto.js"></script>
+</body>
+</html>
