@@ -55,3 +55,28 @@ async function pagar(idProducto) {
     alert('Error al conectar con el servidor');
   }
 }
+
+function pagarCarrito() {
+  // En este ejemplo, asumimos que carrito ya está en memoria
+  fetch('http://localhost:3000/api/crear-transaccion', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ carrito }) // Envías el array con id y cantidad
+  })
+  .then(res => res.json())
+  .then(data => {
+    const form = document.createElement('form');
+    form.method = 'POST';
+    form.action = data.url;
+
+    const input = document.createElement('input');
+    input.type = 'hidden';
+    input.name = 'token_ws';
+    input.value = data.token;
+
+    form.appendChild(input);
+    document.body.appendChild(form);
+    form.submit();
+  });
+}
+

@@ -16,58 +16,61 @@ const db = mysql.createConnection({
 });
 
 // Transbank SDK
-const { WebpayPlus } = require('transbank-sdk');
-const { Options, IntegrationApiKeys, IntegrationCommerceCodes } = require('transbank-sdk');
-const { Transaction } = WebpayPlus;
+const {
+  WebpayPlus,
+  IntegrationApiKeys,
+  IntegrationCommerceCodes,
+  Environment
+} = require('transbank-sdk');
 
-// Configurar transacción de prueba
-const webpay = new Transaction(
-  new Options(
-    IntegrationCommerceCodes.WEBPAY_PLUS,
-    IntegrationApiKeys.WEBPAY,
-    'https://webpay3gint.transbank.cl/'
-  )
-);
-
-// Crear transacción
-app.post('/api/crear-transaccion', async (req, res) => {
-  const { idProducto } = req.body;
-
-  db.query('SELECT * FROM productos WHERE id = ?', [idProducto], async (err, results) => {
-    if (err || results.length === 0) {
-      return res.status(404).json({ error: 'Producto no encontrado' });
-    }
-
-    const producto = results[0];
-    const buyOrder = 'orden-' + Math.floor(Math.random() * 1000000);
-    const sessionId = 'sesion-' + Date.now();
-    const returnUrl = 'http://localhost:5500/html/resultado.html';
-
-    try {
-      const response = await webpay.create(
-        buyOrder,
-        sessionId,
-        producto.precio,
-        returnUrl
-      );
-
-      res.json({ url: response.url, token: response.token });
-    } catch (e) {
-      console.error('Error creando transacción:', e);
-      res.status(500).json({ error: 'No se pudo iniciar la transacción' });
-    }
-  });
+// Crear instancia Webpay Plus en modo integración (pruebas)
+const webpay = new WebpayPlus.Transaction({
+  commerceCode: IntegrationCommerceCodes.WEBPAY_PLUS,
+  apiKey: IntegrationApiKeys.WEBPAY,
+  environment: Environment.Integration
 });
 
-// Confirmar transacción
-app.post('/api/confirmar-transaccion', async (req, res) => {
+// Endpoint para crear transacción con el monto recibido (total carrito)
+app.post("/webpay/create", async (req, res) => {
+  const { monto } = req.body;
+
+  if (!monto || isNaN(monto) || monto <= 0) {
+    return res.status(400).json({ error: 'Monto inválido o no recibido' });
+  }
+
+  const buyOrder = "orden_" + Math.floor(Math.random() * 1000000);
+  const sessionId = "session_" + Math.floor(Math.random() * 1000000);
+  // URL a donde Webpay redirigirá después del pago
+  const returnUrl = "http://localhost:3000/webpay/response";
+
+  try {
+    const response = await webpay.create(
+      buyOrder,
+      sessionId,
+      Number(monto),
+      returnUrl
+    );
+
+    res.json({ url: response.url, token: response.token });
+  } catch (error) {
+    console.error('Error creando transacción:', error);
+    res.status(500).json({ error: 'No se pudo iniciar la transacción' });
+  }
+});
+
+// Endpoint para confirmar la transacción con el token recibido desde Webpay
+app.post('/webpay/commit', async (req, res) => {
   const { token } = req.body;
+
+  if (!token) {
+    return res.status(400).json({ error: 'Token no recibido' });
+  }
 
   try {
     const result = await webpay.commit(token);
     res.json({ status: result.status, amount: result.amount });
-  } catch (e) {
-    console.error('Error confirmando pago:', e);
+  } catch (error) {
+    console.error('Error confirmando transacción:', error);
     res.status(500).json({ error: 'No se pudo confirmar la transacción' });
   }
 });

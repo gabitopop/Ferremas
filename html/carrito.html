@@ -4,7 +4,6 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Carrito de Compras</title>
-  <link href="https://fonts.googleapis.com/css2?family=Bangers&display=swap" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
   <link rel="stylesheet" href="../css/styles.css" />
@@ -12,49 +11,10 @@
 
 <body>
 <main class="main-content py-5">
-  <header class="bg-light py-3 border-bottom">
-      <div class="container d-flex justify-content-between align-items-center">
-        <a href="/" class="d-flex align-items-center text-decoration-none">
-          <!-- Logo -->
-          <svg class="me-2" width="32" height="32" fill="#dc3545" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16">
-            <path d="M0 0h16v16H0z" fill="none"/>
-            <!-- Puedes agregar aquí un icono de logo real -->
-          </svg>
-          <span class="fs-4 fw-bold text-danger">Ferremas</span>
-        </a>
-
-        <nav>
-          <a href="/" class="btn btn-danger me-2">
-            <i class="bi bi-house-door me-1"></i> Home
-          </a>
-        </nav>
-
-        <div class="d-flex align-items-center">
-          <div class="input-group me-2">
-            <input type="search" class="form-control" placeholder="Buscar productos..." aria-label="Buscar productos" />
-            <button class="btn btn-danger">
-              <i class="bi bi-search"></i>
-            </button>
-          </div>
-
-          <button class="btn btn-danger position-relative me-2" onClick="openCart()" aria-label="Carrito">
-            <i class="bi bi-cart"></i>
-            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
-              3
-            </span>
-          </button>
-
-          <button class="btn btn-danger" aria-label="Cuenta">
-            <i class="bi bi-person"></i>
-          </button>
-        </div>
-      </div>
-    </header>
-
   <div class="container">
     <h1>🛒 Carrito de Compras</h1>
 
-    <table class="cart-table">
+    <table class="table cart-table">
       <thead>
         <tr>
           <th>Producto</th>
@@ -64,35 +24,76 @@
           <th>Acción</th>
         </tr>
       </thead>
-      <tbody>
-        <tr>
-          <td>Martillo Antideslizante</td>
-          <td>$15.990</td>
-          <td><input type="number" value="2" min="1" /></td>
-          <td>$31.980</td>
-          <td><button class="btn-delete">Eliminar</button></td>
-        </tr>
-        <tr>
-          <td>Taladro Percutor</td>
-          <td>$49.990</td>
-          <td><input type="number" value="1" min="1" /></td>
-          <td>$49.990</td>
-          <td><button class="btn-delete">Eliminar</button></td>
-        </tr>
-      </tbody>
+      <tbody id="carrito-body"></tbody>
     </table>
 
-    <div class="cart-summary">
-      <h3>Total: <span class="total">$81.970</span></h3>
-      <button class="btn-checkout">Proceder al Pago</button>
-      <button class="btn-back">Seguir Comprando</button>
+    <div class="cart-summary mt-4">
+      <h3>Total: <span class="total">$0</span></h3>
+
+      <!-- Formulario oculto para enviar monto al backend -->
+      <form id="formPago" action="http://localhost:3000/webpay/create" method="POST">
+        <input type="hidden" name="monto" id="montoPago">
+      </form>
+
+      <button class="btn btn-success" id="btn-pagar" onclick="pagar()">Proceder al Pago</button>
+      <a href="index.html" class="btn btn-secondary">Seguir Comprando</a>
     </div>
   </div>
-</main>   
-  <footer class="bg-dark text-white text-center py-4">
-    <p class="mb-0">&copy; 2025 Ferremas. Todos los derechos reservados.</p>
-  </footer>  
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+  // Mostrar productos del carrito
+  const carrito = JSON.parse(localStorage.getItem('carrito')) || [];
+  const tbody = document.getElementById('carrito-body');
+  const totalSpan = document.querySelector('.total');
+  let total = 0;
+
+  carrito.forEach(producto => {
+    const subtotal = producto.precio * producto.cantidad;
+    total += subtotal;
+
+    const fila = `
+      <tr>
+        <td>${producto.nombre}</td>
+        <td>$${producto.precio.toLocaleString()}</td>
+        <td><input type="number" value="${producto.cantidad}" min="1" data-id="${producto.id}" class="form-control cantidad-input"/></td>
+        <td>$${subtotal.toLocaleString()}</td>
+        <td><button class="btn btn-danger btn-delete" data-id="${producto.id}">Eliminar</button></td>
+      </tr>
+    `;
+    tbody.insertAdjacentHTML('beforeend', fila);
+  });
+
+  totalSpan.textContent = `$${total.toLocaleString()}`;
+
+  // Eliminar producto
+  document.querySelectorAll('.btn-delete').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const id = btn.getAttribute('data-id');
+      const nuevoCarrito = carrito.filter(p => p.id !== id);
+      localStorage.setItem('carrito', JSON.stringify(nuevoCarrito));
+      location.reload();
+    });
+  });
+
+  // Proceder al pago
+  function pagar() {
+    if (carrito.length === 0) {
+      alert("Tu carrito está vacío.");
+      return;
+    }
+
+    const total = carrito.reduce((acc, prod) => acc + prod.precio * prod.cantidad, 0);
+    document.getElementById('montoPago').value = total;
+
+    // Guardar última orden por si se necesita más adelante
+    localStorage.setItem('ultimoPago', JSON.stringify(carrito));
+
+    document.getElementById('formPago').submit();
+  }
+</script>
 
 </body>
 </html>
