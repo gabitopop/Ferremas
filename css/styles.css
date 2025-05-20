@@ -169,7 +169,7 @@ nav a:hover,
   border-radius: var(--radius);
   padding: 1rem;
   text-align: center;
-  color: var(--card-foreground);
+  color: var(--accent);
   border: 2px dashed var(--accent);
   background-image: radial-gradient(circle at top left, rgba(255,255,255,0.03), transparent 70%);
   transition: transform 0.3s ease, box-shadow 0.3s ease;

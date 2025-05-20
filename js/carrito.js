@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded', () => {
-  const carrito = JSON.parse(localStorage.getItem('carrito')) || [];
+  let carrito = JSON.parse(localStorage.getItem('carrito')) || [];
   const tbody = document.getElementById('carrito-body');
   const totalSpan = document.querySelector('.total');
   let total = 0;
@@ -27,8 +27,8 @@ document.addEventListener('DOMContentLoaded', () => {
   document.querySelectorAll('.btn-delete').forEach(btn => {
     btn.addEventListener('click', () => {
       const id = btn.getAttribute('data-id');
-      const nuevoCarrito = carrito.filter(p => p.id !== id);
-      localStorage.setItem('carrito', JSON.stringify(nuevoCarrito));
+      carrito = carrito.filter(p => p.id !== id);
+      localStorage.setItem('carrito', JSON.stringify(carrito));
       location.reload();
     });
   });
@@ -45,7 +45,7 @@ document.addEventListener('DOMContentLoaded', () => {
       try {
         // Obtener el total desde el DOM y limpiar formato (quita $ y .)
         const totalTexto = document.querySelector('.total').textContent; // ej: "$1.250"
-        const monto = parseInt(totalTexto.replace(/\$|\./g, '')); // resultado: 1250
+        const monto = parseInt(totalTexto.replace(/\$|\./g, ''));
 
         if (isNaN(monto) || monto <= 0) {
           alert("Monto no válido para el pago.");

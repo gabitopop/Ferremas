@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Error de Pago</title>
+</head>
+<body>
+  <h1>Hubo un problema con el pago</h1>
+  <p id="mensaje"></p>
+  <a href="../../html/principal.html">Volver al inicio</a>
+
+  <script>
+    const urlParams = new URLSearchParams(window.location.search);
+    const estado = urlParams.get('estado') || urlParams.get('error');
+
+    const mensaje = document.getElementById('mensaje');
+    if (estado === 'INITIALIZED') {
+      mensaje.textContent = 'El pago no fue completado. Es posible que hayas cerrado la ventana o cancelado la operación.';
+    } else if (estado === 'REJECTED') {
+      mensaje.textContent = 'El pago fue rechazado. Intenta con otra tarjeta.';
+    } else if (estado === 'commit') {
+      mensaje.textContent = 'Error al confirmar la transacción con Webpay.';
+    } else {
+      mensaje.textContent = 'Estado/Error: ' + estado;
+    }
+  </script>
+</body>
+</html>

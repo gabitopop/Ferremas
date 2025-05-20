@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="es">
+<head><meta charset="UTF-8" /><title>Pago Exitoso</title></head>
+<body>
+  <h1>¡Pago realizado con éxito!</h1>
+  <p>Monto: <span id="monto"></span></p>
+  <p>Orden: <span id="orden"></span></p>
+  <a href="../../html/principal.html">Volver al inicio</a>
+
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    document.getElementById('monto').textContent = params.get('monto');
+    document.getElementById('orden').textContent = params.get('orden');
+  </script>
+</body>
+</html>
