@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Procesando pago...</title>
+    <script>
+        window.onload = function () {
+            // Abrir gracias.html en una nueva pestaña
+            window.open("/gracias.html", "_blank");
+
+            // Opcional: puedes mostrar un mensaje de error en esta pestaña
+            document.getElementById("mensaje").innerText = "Hubo un problema al procesar el pago, pero la transacción fue enviada.";
+        };
+    </script>
+</head>
+<body style="font-family: Arial, sans-serif; text-align: center; margin-top: 50px;">
+    <h2 id="mensaje">Procesando redirección...</h2>
+</body>
+</html>
