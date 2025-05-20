@@ -8,6 +8,7 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true })); // Necesario para leer token_ws
+app.use(express.static('public'));
 
 // ========================================================================
 //  Configuración de la Base de Datos
@@ -22,8 +23,6 @@ const db = mysql.createConnection({
 db.connect((err) => {
     if (err) {
         console.error('Error al conectar a la base de datos:', err);
-        // En una aplicación real, aquí deberías manejar el error de manera más robusta
-        // (por ejemplo, detener la aplicación o intentar reconectar).
         return;
     }
     console.log('Conexión a la base de datos establecida');
@@ -46,76 +45,76 @@ const webpay = new WebpayPlus.Transaction({
 app.post("/webpay/create", async (req, res) => {
     const { monto } = req.body;
 
-    // Validación del monto
     if (!monto || isNaN(monto) || monto <= 0) {
         return res.status(400).json({ error: 'Monto inválido o no recibido' });
     }
 
     const buyOrder = "orden_" + Math.floor(Math.random() * 1000000);
     const sessionId = "session_" + Math.floor(Math.random() * 1000000);
-    const returnUrl = "http://localhost:3000/webpay/response"; // IMPORTANTE: Ajusta esto a tu URL
+    const returnUrl = "http://localhost:3000/webpay/response"; // SIN ESPACIOS
 
     try {
         const response = await webpay.create(buyOrder, sessionId, monto, returnUrl);
         res.json({ url: response.url, token: response.token });
     } catch (error) {
         console.error('Error al crear la transacción:', error);
-        res.status(500).json({ error: 'No se pudo iniciar la transacción: ' + error.message }); // Incluye el mensaje de error
+        res.status(500).json({ error: 'No se pudo iniciar la transacción: ' + error.message });
     }
 });
 
-// Ruta para confirmar la transacción (recibe la respuesta de Transbank)
+// Ruta para confirmar la transacción (recibe la respuesta de Transbank - YA NO SE USA DIRECTAMENTE)
 app.post('/webpay/response', async (req, res) => {
-    const token_ws = req.body.token_ws;
+    // Esta ruta ya no se espera que Transbank la llame directamente con POST.
+    // Se mantiene por si acaso o para otras lógicas.
+    console.log('Petición POST inesperada a /webpay/response', req.body);
+    res.status(400).send('Petición inesperada');
+});
 
+// Ruta para confirmar la transacción (desde el frontend después de la redirección)
+app.post('/webpay/confirm', async (req, res) => {
+    const { token_ws } = req.body;
     if (!token_ws) {
-        return res.status(400).send('Token no recibido desde Webpay');
+        return res.status(400).json({ error: 'Token WS no recibido para confirmar' });
     }
-
     try {
         const result = await webpay.commit(token_ws);
+        console.log('Resultado de webpay.commit:', result);
 
         // Guardar la venta en la base de datos
         const query = "INSERT INTO ventas (buy_order, amount, status, transaction_date) VALUES (?, ?, ?, ?)";
         db.query(query, [result.buyOrder, result.amount, result.status, result.transactionDate], (err) => {
             if (err) {
-                console.error('Error al guardar la venta en la base de datos:', err);
-                // No debes redirigir al usuario aquí si falla la base de datos.  Es un error del servidor.
-                // Considera loggear el error y mostrar un mensaje genérico de error al usuario.
-                return res.status(500).send('Error al guardar la transacción en la base de datos.');
+                console.error('Error al guardar la venta:', err);
+                return res.status(500).json({ error: 'Error al guardar la venta en la base de datos' });
             }
-            console.log('Venta guardada en la base de datos:', result);
+            res.json({ success: true, message: 'Venta guardada', result: result });
         });
-
-        // Redirigir al frontend (éxito o fallo, basado en el estado de la transacción)
-        if (result.status === 'AUTHORIZED') {
-             res.redirect(`http://localhost:3000/exito?monto=${result.amount}`); //TODO: Cambiar esto
-        }
-        else{
-            res.redirect(`http://localhost:3000/error?status=${result.status}`);
-        }
-
-
-    } catch (error) {
-        console.error('Error al confirmar la transacción (commit):', error);
-        res.redirect('http://localhost:3000/error'); // Redirige a una página de error en tu frontend
-    }
-});
-
-// Ruta para confirmar la transacción (desde el frontend - Opcional)
-app.post('/webpay/commit', async (req, res) => {
-    const { token } = req.body;
-
-    if (!token) {
-        return res.status(400).json({ error: 'Token no recibido' });
-    }
-
-    try {
-        const result = await webpay.commit(token);
-        res.json({ status: result.status, amount: result.amount });
     } catch (error) {
         console.error('Error al confirmar la transacción:', error);
-        res.status(500).json({ error: 'No se pudo confirmar la transacción: ' + error.message }); // Incluye el mensaje
+        res.status(500).json({ error: 'Error al confirmar la transacción con Transbank' });
+    }
+});
+app.post('/webpay/confirm', async (req, res) => {
+    const { token_ws } = req.body;
+    if (!token_ws) {
+        return res.status(400).json({ error: 'Token WS no recibido para confirmar' });
+    }
+    try {
+        const result = await webpay.commit(token_ws);
+        console.log('Resultado de webpay.commit:', result);
+
+        // Guardar la venta en la base de datos
+        const query = "INSERT INTO ventas (buy_order, amount, status, transaction_date) VALUES (?, ?, ?, ?)";
+        db.query(query, [result.buyOrder, result.amount, result.status, result.transactionDate], (err) => { // <--- REVISA ESTA LÍNEA
+            if (err) {
+                console.error('Error al guardar la venta:', err);
+                return res.status(500).json({ error: 'Error al guardar la venta en la base de datos' });
+            }
+            res.json({ success: true, message: 'Venta guardada', result: result });
+        });
+    } catch (error) {
+        console.error('Error al confirmar la transacción:', error);
+        res.status(500).json({ error: 'Error al confirmar la transacción con Transbank' });
     }
 });
 

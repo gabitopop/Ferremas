@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Resultado del Pago</title>
+</head>
+<body>
+    <h1>Resultado del Pago</h1>
+    <div id="resultado"></div>
+    <script>
+        const urlParams = new URLSearchParams(window.location.search);
+        const token_ws = urlParams.get('token_ws');
+        const status = urlParams.get('status');
+
+        const resultadoDiv = document.getElementById('resultado');
+
+        if (status === 'AUTHORIZED') {
+            resultadoDiv.textContent = 'Pago exitoso. Token: ' + token_ws;
+            // Aquí podrías llamar a tu backend para confirmar y finalizar la orden
+            fetch('/webpay/confirm', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ token_ws: token_ws })
+            })
+            .then(response => response.json())
+            .then(data => console.log('Respuesta de confirmación:', data))
+            .catch(error => console.error('Error al confirmar:', error));
+        } else {
+            resultadoDiv.textContent = 'Pago fallido. Estado: ' + status + '. Token: ' + token_ws;
+        }
+    </script>
+    <a href="../../html/principal.html">Volver al inicio</a>
+</body>
+</html>
