@@ -1,4 +1,76 @@
 const express = require('express');
+const path = require('path');
+const app = express();
+const PORT = 3000;
+
+// Middleware para procesar JSON y formularios
+app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
+
+// Servir archivos estáticos (como gracias.html)
+app.use(express.static(path.join(__dirname, 'public')));
+
+// Ruta de prueba que simula creación de una transacción Webpay
+app.post('/webpay/create', async (req, res) => {
+  try {
+    // Simula crear una transacción
+    const returnUrl = "http://localhost:3000/webpay/response";
+    const token = "TOKEN_EJEMPLO_WEBPAY"; // ← reemplázalo por el token real desde Webpay
+
+    // Responde una página HTML que:
+    // - abre gracias.html en nueva pestaña
+    // - redirige la actual a returnUrl con el token
+    res.send(`
+      <!DOCTYPE html>
+      <html lang="es">
+      <head>
+        <meta charset="UTF-8">
+        <title>Redirigiendo...</title>
+      </head>
+      <body>
+        <p>Redirigiendo al portal de pago...</p>
+
+        <script>
+          // Abrir gracias.html en una nueva pestaña
+          window.open('/gracias.html', '_blank');
+
+          // Redirigir a Webpay con el token usando POST
+          const form = document.createElement('form');
+          form.method = 'POST';
+          form.action = '${returnUrl}';
+
+          const input = document.createElement('input');
+          input.type = 'hidden';
+          input.name = 'token_ws';
+          input.value = '${token}';
+          form.appendChild(input);
+
+          document.body.appendChild(form);
+          form.submit();
+        </script>
+      </body>
+      </html>
+    `);
+  } catch (error) {
+    console.error("Error al crear la transacción:", error);
+    res.status(500).send("Error al crear la transacción");
+  }
+});
+
+// Ruta de ejemplo que podría recibir la respuesta de Webpay (solo para ver que redirige bien)
+app.post('/webpay/response', (req, res) => {
+  res.send("¡Respuesta de Webpay recibida! Token: " + req.body.token_ws);
+});
+
+// Iniciar el servidor
+app.listen(PORT, () => {
+  console.log(`Servidor iniciado en http://localhost:${PORT}`);
+});
+
+
+
+/** 
+const express = require('express');
 const mysql = require('mysql');
 const cors = require('cors');
 const bcrypt = require('bcrypt');
@@ -227,3 +299,4 @@ const port = 3000;
 app.listen(port, () => {
     console.log(`🚀 Servidor corriendo en http://localhost:${port}`);
 });
+*/
