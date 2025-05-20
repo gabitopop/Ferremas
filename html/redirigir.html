@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Procesando pago...</title>
+    <script>
+        window.onload = function () {
+            // Abrir gracias.html en nueva pestaña
+            window.open("/gracias.html", "_blank");
+
+            // Mostrar mensaje en esta pestaña
+            document.getElementById("mensaje").innerText =
+                "Transacción exitosa. Serás redirigido a la página principal...";
+
+            // Redirigir a principal.html después de 3 segundos
+            setTimeout(() => {
+                window.location.href = "/principal.html";
+            }, 3000);
+        };
+    </script>
+</head>
+<body style="font-family: Arial, sans-serif; text-align: center; margin-top: 50px;">
+    <h2 id="mensaje">Procesando redirección...</h2>
+</body>
+</html>

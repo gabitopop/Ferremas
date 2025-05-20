@@ -10,8 +10,11 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Ajuste importante para servir archivos estáticos desde ../public
-app.use(express.static(path.join(__dirname, '..', 'public')));
+// Archivos estáticos (imágenes, css, js, etc.)
+app.use('/public', express.static(path.join(__dirname, '../public')));
+
+// Servir HTMLs desde carpeta externa
+app.use(express.static(path.join(__dirname, '../html')));
 
 // ========================================================================
 //  Configuración de la Base de Datos
@@ -65,7 +68,7 @@ app.post("/webpay/create", async (req, res) => {
     }
 });
 
-// Confirmación desde frontend después de redirección
+// Confirmación desde el frontend (opcional si se usa commit directo en /webpay/response)
 app.post('/webpay/confirm', async (req, res) => {
     const { token_ws } = req.body;
     if (!token_ws) {
@@ -76,8 +79,11 @@ app.post('/webpay/confirm', async (req, res) => {
         const result = await webpay.commit(token_ws);
         console.log('Resultado de webpay.commit:', result);
 
+        const fecha = new Date(result.transactionDate);
+        const fechaFormateada = `${fecha.getFullYear()}-${String(fecha.getMonth() + 1).padStart(2, '0')}-${String(fecha.getDate()).padStart(2, '0')} ${String(fecha.getHours()).padStart(2, '0')}:${String(fecha.getMinutes()).padStart(2, '0')}:${String(fecha.getSeconds()).padStart(2, '0')}`;
+
         const query = "INSERT INTO ventas (buy_order, amount, status, transaction_date) VALUES (?, ?, ?, ?)";
-        db.query(query, [result.buyOrder, result.amount, result.status, result.transactionDate], (err) => {
+        db.query(query, [result.buyOrder, result.amount, result.status, fechaFormateada], (err) => {
             if (err) {
                 console.error('Error al guardar la venta:', err);
                 return res.status(500).json({ error: 'Error al guardar la venta en la base de datos' });
@@ -90,9 +96,31 @@ app.post('/webpay/confirm', async (req, res) => {
     }
 });
 
-// Mostrar HTML que abre nueva pestaña a gracias.html
-app.get('/webpay/response', (req, res) => {
-    res.sendFile(path.join(__dirname, '..', 'public', 'redirigir.html'));
+// Confirmación automática desde Transbank y mostrar redirigir.html
+app.get('/webpay/response', async (req, res) => {
+    const token = req.query.token_ws;
+    if (!token) return res.status(400).send("Token no recibido");
+
+    try {
+        const result = await webpay.commit(token);
+        console.log("Resultado de webpay.commit:", result);
+
+        const fecha = new Date(result.transactionDate);
+        const fechaFormateada = `${fecha.getFullYear()}-${String(fecha.getMonth() + 1).padStart(2, '0')}-${String(fecha.getDate()).padStart(2, '0')} ${String(fecha.getHours()).padStart(2, '0')}:${String(fecha.getMinutes()).padStart(2, '0')}:${String(fecha.getSeconds()).padStart(2, '0')}`;
+
+        const query = "INSERT INTO ventas (buy_order, amount, status, transaction_date) VALUES (?, ?, ?, ?)";
+        db.query(query, [result.buyOrder, result.amount, result.status, fechaFormateada], (err) => {
+            if (err) {
+                console.error('Error al guardar la venta:', err);
+            }
+        });
+
+        // Mostrar redirigir.html desde la carpeta html
+        res.sendFile(path.join(__dirname, '../html/redirigir.html'));
+    } catch (error) {
+        console.error('Error al procesar el pago:', error);
+        res.status(500).send("Error al procesar el pago");
+    }
 });
 
 // ========================================================================
@@ -201,6 +229,7 @@ const port = 3000;
 app.listen(port, () => {
     console.log(`🚀 Servidor corriendo en http://localhost:${port}`);
 });
+
 
 /** 
 const express = require('express');
